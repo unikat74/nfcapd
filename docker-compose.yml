@@ -1,0 +1,33 @@
+services:
+  nfcapd:
+    build:
+      context: .
+      args:
+        NFDUMP_VERSION: "1.7.7"
+    container_name: nfcapd
+    restart: unless-stopped
+    ports:
+      - "12345:12345/udp"
+    environment:
+      TZ: Europe/Warsaw
+      FLOW_DIR: /flows
+      PORT: "12345"
+      SUBDIR_FORMAT: "1"
+      ROTATE_INTERVAL: "300"
+    volumes:
+      - ./nfcapd/data:/flows
+
+  nfcapd-retention:
+    build:
+      context: .
+      args:
+        NFDUMP_VERSION: "1.7.7"
+    container_name: nfcapd-retention
+    restart: unless-stopped
+    command: ["/cleanup.sh"]
+    environment:
+      TZ: Europe/Warsaw
+      FLOW_DIR: /flows
+      SLEEP_SECONDS: "3600"
+    volumes:
+      - ./nfcapd/data:/flows
