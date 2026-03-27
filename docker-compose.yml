@@ -3,34 +3,34 @@ services:
     build:
       context: .
       args:
-        NFDUMP_VERSION: "1.7.7"
+        NFDUMP_VERSION: "${NFDUMP_VERSION:-1.7.7}"
     container_name: nfcapd
     restart: unless-stopped
     ports:
-      - "12345:12345/udp"
+      - "${PORT:-12345}:${PORT:-12345}/udp"
     environment:
-      TZ: Europe/Warsaw
-      FLOW_DIR: /flows
-      PORT: "12345"
-      SUBDIR_FORMAT: "1"
-      ROTATE_INTERVAL: "300"
+      TZ: "${TZ:-Europe/Warsaw}"
+      FLOW_DIR: "${FLOW_DIR:-/flows}"
+      PORT: "${PORT:-12345}"
+      SUBDIR_FORMAT: "${SUBDIR_FORMAT:-1}"
+      ROTATE_INTERVAL: "${ROTATE_INTERVAL:-300}"
     volumes:
-      - ./nfcapd/data:/flows
+      - "${DATA_DIR:-./nfcapd/data}:${FLOW_DIR:-/flows}"
 
   nfcapd-retention:
     build:
       context: .
       args:
-        NFDUMP_VERSION: "1.7.7"
+        NFDUMP_VERSION: "${NFDUMP_VERSION:-1.7.7}"
     container_name: nfcapd-retention
     restart: unless-stopped
     command: ["/cleanup.sh"]
     environment:
-      TZ: Europe/Warsaw
-      FLOW_DIR: /flows
-      SLEEP_SECONDS: "3600"
+      TZ: "${TZ:-Europe/Warsaw}"
+      FLOW_DIR: "${FLOW_DIR:-/flows}"
+      SLEEP_SECONDS: "${RETENTION_SLEEP:-3600}"
     volumes:
-      - ./nfcapd/data:/flows
+      - "${DATA_DIR:-./nfcapd/data}:${FLOW_DIR:-/flows}"
 
   nfcapd-monitor:
     build:
@@ -39,12 +39,12 @@ services:
     container_name: nfcapd-monitor
     restart: "no"
     environment:
-      TZ: Europe/Warsaw
-      FLOW_DIR: /flows
+      TZ: "${TZ:-Europe/Warsaw}"
+      FLOW_DIR: "${FLOW_DIR:-/flows}"
       NTFY_URL: "${NTFY_URL:-}"
       FILE_AGE_THRESHOLD: "${FILE_AGE_THRESHOLD:-15}"
       DISK_THRESHOLD: "${DISK_THRESHOLD:-90}"
       CHECK_INTERVAL: "${CHECK_INTERVAL:-300}"
       HOSTNAME_LABEL: "${HOSTNAME_LABEL:-}"
     volumes:
-      - ./nfcapd/data:/flows
+      - "${DATA_DIR:-./nfcapd/data}:${FLOW_DIR:-/flows}"
