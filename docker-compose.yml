@@ -31,3 +31,20 @@ services:
       SLEEP_SECONDS: "3600"
     volumes:
       - ./nfcapd/data:/flows
+
+  nfcapd-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitor
+    container_name: nfcapd-monitor
+    restart: "no"
+    environment:
+      TZ: Europe/Warsaw
+      FLOW_DIR: /flows
+      NTFY_URL: "${NTFY_URL:-}"
+      FILE_AGE_THRESHOLD: "${FILE_AGE_THRESHOLD:-15}"
+      DISK_THRESHOLD: "${DISK_THRESHOLD:-90}"
+      CHECK_INTERVAL: "${CHECK_INTERVAL:-300}"
+      HOSTNAME_LABEL: "${HOSTNAME_LABEL:-}"
+    volumes:
+      - ./nfcapd/data:/flows
