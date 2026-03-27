@@ -7,7 +7,7 @@ services:
     container_name: nfcapd
     restart: unless-stopped
     ports:
-      - "${BIND_ADDRESS:-12345}:${PORT:-12345}/udp"
+      - "${HOST_IP:-0.0.0.0}:${PORT:-12345}:${PORT:-12345}/udp"
     environment:
       TZ: "${TZ:-Europe/Warsaw}"
       FLOW_DIR: "${FLOW_DIR:-/flows}"
